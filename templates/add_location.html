@@ -1,1 +1,19 @@
+<!-- add_location.html -->
 
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Lisää uusi varastopaikka</h2>
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.type.label }} {{ form.type(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.shelf.label }} {{ form.shelf(class="form-control") }}
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Lisää varastopaikka" class="btn btn-primary">
+    </div>
+  </form>
+{% endblock %}
