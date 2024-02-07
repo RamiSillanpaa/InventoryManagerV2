@@ -1,1 +1,27 @@
+<!-- index.html -->
 
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Tuotteet</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Valmistajan koodi</th>
+        <th>Käyttäjän koodi</th>
+        <th>Kuvaus</th>
+        <th>Kategoria</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.mancode }}</td>
+          <td>{{ product.usercode }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.category }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
