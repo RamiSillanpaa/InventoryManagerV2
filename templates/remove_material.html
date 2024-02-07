@@ -1,1 +1,19 @@
+<!-- remove_material.html -->
 
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Poista raaka-aine varastosta</h2>
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.product.label }} {{ form.product(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.quantity.label }} {{ form.quantity(class="form-control") }}
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Poista raaka-aine" class="btn btn-primary">
+    </div>
+  </form>
+{% endblock %}
