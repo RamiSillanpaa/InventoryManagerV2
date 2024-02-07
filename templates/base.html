@@ -1,1 +1,27 @@
+<!-- base.html -->
 
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varastonhallinta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <a href="{{ url_for('index') }}">Etusivu</a>
+    <a href="{{ url_for('add_product') }}">Lisää tuote</a>
+    <a href="{{ url_for('add_location') }}">Lisää varastopaikka</a>
+    <a href="{{ url_for('add_stock') }}">Lisää varastoon</a>
+    <a href="{{ url_for('transfer_product') }}">Siirrä tuote</a>
+    <a href="{{ url_for('remove_material') }}">Poista raaka-aine</a>
+</div>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
