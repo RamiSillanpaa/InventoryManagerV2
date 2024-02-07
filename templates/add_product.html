@@ -1,1 +1,28 @@
+<!-- add_product.html -->
 
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Lisää uusi tuote</h2>
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.mancode.label }} {{ form.mancode(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.usercode.label }} {{ form.usercode(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.description.label }} {{ form.description(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.category.label }} {{ form.category(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.location.label }} {{ form.location(class="form-control") }}
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Lisää tuote" class="btn btn-primary">
+    </div>
+  </form>
+{% endblock %}
