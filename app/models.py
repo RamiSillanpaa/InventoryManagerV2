@@ -4,7 +4,6 @@ from app import db
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #location/type of storage
     type = db.Column(db.String(20), nullable=False)
     #shelf identifier
     shelf = db.Column(db.String(20), nullable=False)
@@ -29,4 +28,5 @@ class Stock(db.Model):
     product = db.relationship('Product', back_populates='stocks')
     quantity = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
+    #stock action (in, out)
     action = db.Column(db.String(20), nullable=False)
