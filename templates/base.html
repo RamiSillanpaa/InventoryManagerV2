@@ -11,12 +11,12 @@
 <body>
 
 <div class="navbar">
-    <a href="{{ url_for('index') }}">Etusivu</a>
-    <a href="{{ url_for('add_product') }}">Lisää tuote</a>
-    <a href="{{ url_for('add_location') }}">Lisää varastopaikka</a>
-    <a href="{{ url_for('add_stock') }}">Lisää varastoon</a>
-    <a href="{{ url_for('transfer_product') }}">Siirrä tuote</a>
-    <a href="{{ url_for('remove_material') }}">Poista raaka-aine</a>
+    <a href="{{ url_for('main.index') }}">Etusivu</a>
+    <a href="{{ url_for('main.add_product') }}">Lisää tuote</a>
+    <a href="{{ url_for('main.add_location') }}">Lisää varastopaikka</a>
+    <a href="{{ url_for('main.add_stock') }}">Lisää varastoon</a>
+    <a href="{{ url_for('main.transfer_product') }}">Siirrä tuote</a>
+    <a href="{{ url_for('main.remove_material') }}">Poista raaka-aine</a>
 </div>
 
 <div class="container">

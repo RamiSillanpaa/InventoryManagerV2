@@ -1,6 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+# app/models.py
 
-db = SQLAlchemy()
+from app import db
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
