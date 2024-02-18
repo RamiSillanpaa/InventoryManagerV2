@@ -16,4 +16,23 @@
       <input type="submit" value="Lisää varastopaikka" class="btn btn-primary">
     </div>
   </form>
+    <!-- Add table to display all locations -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Shelf</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for location in locations %}
+        <tr>
+          <td>{{ location.id }}</td>
+          <td>{{ location.type }}</td>
+          <td>{{ location.shelf }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

@@ -2,7 +2,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, current_app
 
-from app import forms
+from app.forms import ProductForm
 from .models import db, Location, Product, Stock
 from datetime import datetime
 
@@ -30,10 +30,10 @@ def add_product():
         db.session.add(new_product)
         db.session.commit()
 
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.add_product'))
 
     locations = Location.query.all()
-    return render_template('add_product.html', locations=locations, form=forms.ProductForm())
+    return render_template('add_product.html', locations=locations, form=ProductForm())
 
 @main.route('/stock/<int:product_id>', methods=['GET', 'POST'])
 def stock(product_id):
@@ -53,6 +53,7 @@ def stock(product_id):
 
 @main.route('/add_location', methods=['GET', 'POST'])
 def add_location():
+    locations = Location.query.all()  # Query all locations
     if request.method == 'POST':
         # Haetaan lomakkeelta tiedot
         type = request.form['type']
@@ -64,12 +65,11 @@ def add_location():
         db.session.add(new_location)
         db.session.commit()
         
-        return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
+        locations = Location.query.all()  # Query all locations
+        return render_template('add_location.html', form=ProductForm(), locations=locations)
         
-        
-
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_location.html', form=forms.ProductForm())
+    return render_template('add_location.html', form=ProductForm(), locations=locations)
 
 @main.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
@@ -78,7 +78,7 @@ def add_stock():
         return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_stock.html', form=forms.ProductForm())
+    return render_template('add_stock.html', form=ProductForm())
 
 @main.route('/transfer_product', methods=['GET', 'POST'])
 def transfer_product():
@@ -87,7 +87,7 @@ def transfer_product():
         return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('transfer_product.html', form=forms.ProductForm())
+    return render_template('transfer_product.html', form=ProductForm())
 
 @main.route('/remove_material', methods=['GET', 'POST'])
 def remove_material():
@@ -96,4 +96,4 @@ def remove_material():
         return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('remove_material.html', form=forms.ProductForm())
+    return render_template('remove_material.html', form=ProductForm())

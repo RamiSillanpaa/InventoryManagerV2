@@ -4,9 +4,11 @@ from app import db
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    #location/type of storage (outside, inside, yard)
     type = db.Column(db.String(20), nullable=False)
     #shelf identifier
     shelf = db.Column(db.String(20), nullable=False)
+    # Add foreign key relationship with Product
     products = db.relationship('Product', back_populates='location')
 
 class Product(db.Model):
@@ -16,6 +18,7 @@ class Product(db.Model):
     #user's own product code
     usercode = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(200), nullable=False)
+    #product category (raw material, parts, finished product)
     category = db.Column(db.String(20), nullable=False)
     #default location for product
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
