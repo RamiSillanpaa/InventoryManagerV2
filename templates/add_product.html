@@ -25,4 +25,29 @@
       <input type="submit" value="Lisää tuote" class="btn btn-primary">
     </div>
   </form>
+  <!-- Add table to display all products -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Manufacturer's code</th>
+        <th>EMcode</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Location</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.mancode }}</td>
+          <td>{{ product.usercode }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.category }}</td>
+          <td>{{ product.location.shelf }}</td> <!-- Display shelf instead of location ID -->
+          <td>{{ product.quantity }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

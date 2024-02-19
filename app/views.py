@@ -17,6 +17,7 @@ def index():
 
 @main.route('/add_product', methods=['GET', 'POST'])
 def add_product():
+    products = Product.query.all()
     if request.method == 'POST':
         # Haetaan lomakkeelta tiedot
         mancode = request.form['mancode']
@@ -30,10 +31,12 @@ def add_product():
         db.session.add(new_product)
         db.session.commit()
 
+        locations = Location.query.all()
+        products = Product.query.all()
         return redirect(url_for('main.add_product'))
 
     locations = Location.query.all()
-    return render_template('add_product.html', locations=locations, form=ProductForm())
+    return render_template('add_product.html', form=ProductForm(), locations=locations, products=products)
 
 @main.route('/stock/<int:product_id>', methods=['GET', 'POST'])
 def stock(product_id):
@@ -66,16 +69,16 @@ def add_location():
         db.session.commit()
         
         locations = Location.query.all()  # Query all locations
-        return render_template('add_location.html', form=ProductForm(), locations=locations)
+        return redirect(url_for('main.add_location'))
         
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_location.html', form=ProductForm(), locations=locations)
+    return render_template('add_location.html', form=ProductForm(), locations=locations) 
 
 @main.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
     if request.method == 'POST':
         # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
+        return redirect(url_for('main.add_stock'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
     return render_template('add_stock.html', form=ProductForm())
@@ -84,7 +87,7 @@ def add_stock():
 def transfer_product():
     if request.method == 'POST':
         # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
+        return redirect(url_for('main.transfer_product'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
     return render_template('transfer_product.html', form=ProductForm())
@@ -93,7 +96,7 @@ def transfer_product():
 def remove_material():
     if request.method == 'POST':
         # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.index'))  # Ohjaa takaisin pääsivulle
+        return redirect(url_for('main.remove_material'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
     return render_template('remove_material.html', form=ProductForm())
