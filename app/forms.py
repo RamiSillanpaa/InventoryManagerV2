@@ -4,12 +4,16 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, IntegerField, SearchField
 from wtforms.validators import DataRequired
 from wtforms_sqlalchemy.fields import QuerySelectField
-from app.models import Location
+from app.models import Location, Product
 
 def get_locations():
         # Function to retrieve locations from the database
         # Replace this with your actual implementation
         return Location.query.all()
+def get_products():
+        # Function to retrieve products from the database
+        # Replace this with your actual implementation
+        return Product.query.all()
 
 class ProductForm(FlaskForm):
     # Manufacturers product code
@@ -27,8 +31,14 @@ class ProductForm(FlaskForm):
     #shelf identifier
     shelf = StringField('Shelf', validators=[DataRequired()])
     product = StringField('Product', validators=[DataRequired()])
-    quantity = IntegerField('Quantity', validators=[DataRequired()])
-    action = SelectField('Action', choices=[('in', 'In'), ('out', 'Out')], validators=[DataRequired()])
     destination_location = SelectField('Destination Location', coerce=int, validators=[DataRequired()])
     source_location = SelectField('Source Location', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Add Product')
+
+class StockForm(FlaskForm):
+    # Quantity of stock
+    quantity = IntegerField('Quantity', validators=[DataRequired()])
+    # Stock action (in, out)
+    action = SelectField('Action', choices=[('in', 'In'), ('out', 'Out')], validators=[DataRequired()])
+    submit = SubmitField('Add Stock')
+    product = QuerySelectField('Product', query_factory=get_products, get_label='description', validators=[DataRequired()])

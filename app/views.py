@@ -2,7 +2,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, current_app
 
-from app.forms import ProductForm
+from app.forms import ProductForm, StockForm
 from .models import db, Location, Product, Stock
 from datetime import datetime
 
@@ -31,12 +31,12 @@ def add_product():
         db.session.add(new_product)
         db.session.commit()
 
-        locations = Location.query.all()
-        products = Product.query.all()
+        #locations = Location.query.all()
+        #products = Product.query.all()
         return redirect(url_for('main.add_product'))
 
-    locations = Location.query.all()
-    return render_template('add_product.html', form=ProductForm(), locations=locations, products=products)
+    #locations = Location.query.all()
+    return render_template('add_product.html', form=ProductForm())
 
 @main.route('/stock/<int:product_id>', methods=['GET', 'POST'])
 def stock(product_id):
@@ -78,10 +78,16 @@ def add_location():
 def add_stock():
     if request.method == 'POST':
         # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.add_stock'))  # Ohjaa takaisin pääsivulle
+        product = request.form['product']
+        quantity = request.form['quantity']
+        action = request.form['action']
+        input_stock = Stock(product=product, quantity=quantity, action=action)
+        db.session.add(input_stock)
+        db.session.commit()
+        return redirect(url_for('main.add_stock'), form=StockForm())
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_stock.html', form=ProductForm())
+    return render_template('add_stock.html', form=StockForm())
 
 @main.route('/transfer_product', methods=['GET', 'POST'])
 def transfer_product():
