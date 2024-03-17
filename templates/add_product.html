@@ -19,9 +19,6 @@
       {{ form.category.label }} {{ form.category(class="form-control") }}
     </div>
     <div class="form-group">
-      {{ form.location.label }} {{ form.location(class="form-control") }}
-    </div>
-    <div class="form-group">
       <input type="submit" value="Lisää tuote" class="btn btn-primary">
     </div>
   </form>
@@ -33,8 +30,6 @@
         <th>EMcode</th>
         <th>Description</th>
         <th>Category</th>
-        <th>Location</th>
-        <th>Quantity</th>
       </tr>
     </thead>
     <tbody>
@@ -44,8 +39,6 @@
           <td>{{ product.usercode }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.category }}</td>
-          <td>{{ product.location.shelf }}</td> <!-- Display shelf instead of location ID -->
-          <td>{{ product.quantity }}</td>
         </tr>
       {% endfor %}
     </tbody>

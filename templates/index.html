@@ -7,19 +7,21 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Valmistajan koodi</th>
-        <th>Käyttäjän koodi</th>
-        <th>Kuvaus</th>
-        <th>Kategoria</th>
+        <th>Tuote</th>
+        <th>Sijainti</th>
+        <th>Hylly</th>
+        <th>Määrä</th>
+        <th>Päivämäärä</th>
       </tr>
     </thead>
     <tbody>
       {% for product in products %}
         <tr>
-          <td>{{ product.mancode }}</td>
-          <td>{{ product.usercode }}</td>
           <td>{{ product.description }}</td>
-          <td>{{ product.category }}</td>
+          <td>{{ location.type }}</td>
+          <td>{{ location.shelf }}</td>
+          <td>{{ stocks.quantity }}</td>
+          <td>{{ stocks.timestamp }}</td>
         </tr>
       {% endfor %}
     </tbody>

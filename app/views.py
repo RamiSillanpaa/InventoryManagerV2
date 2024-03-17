@@ -1,10 +1,11 @@
 # app/views.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, current_app, flash
 
-from app.forms import ProductForm, StockForm
-from .models import db, Location, Product, Stock
+from app.forms import Form
+from .models import db, Location, Product, Stock, Log
 from datetime import datetime
+#from sqlalchemy.orm.exc import NoResultFound
 
 main = Blueprint('main', __name__)
 
@@ -12,91 +13,103 @@ main = Blueprint('main', __name__)
 def index():
     print(current_app)  # Tulostaa Flask-sovelluksen olion
     print(current_app.jinja_env.loader.list_templates())  # Tulostaa kaikki ladatut templaatit
-    products = Product.query.all()
-    return render_template('index.html', products=products)
+    return render_template('index.html')
 
 @main.route('/add_product', methods=['GET', 'POST'])
 def add_product():
-    products = Product.query.all()
     if request.method == 'POST':
         # Haetaan lomakkeelta tiedot
         mancode = request.form['mancode']
         usercode = request.form['usercode']
         description = request.form['description']
         category = request.form['category']
-        location_id = request.form['location']
 
         # Luodaan uusi tuote tietokantaan
-        new_product = Product(mancode=mancode, usercode=usercode, description=description, category=category, location_id=location_id)
+        new_product = Product(mancode=mancode, usercode=usercode, description=description, category=category)
         db.session.add(new_product)
         db.session.commit()
 
-        #locations = Location.query.all()
-        #products = Product.query.all()
         return redirect(url_for('main.add_product'))
 
-    #locations = Location.query.all()
-    return render_template('add_product.html', form=ProductForm())
-
-@main.route('/stock/<int:product_id>', methods=['GET', 'POST'])
-def stock(product_id):
-    if request.method == 'POST':
-        # Haetaan lomakkeelta tiedot
-        quantity = int(request.form['quantity'])
-        action = request.form['action']
-
-        # Luodaan uusi varastotapahtuma tietokantaan
-        new_stock = Stock(product_id=product_id, quantity=quantity, timestamp=datetime.now(), action=action)
-        db.session.add(new_stock)
-        db.session.commit()
-
-    product = Product.query.get_or_404(product_id)
-    stocks = Stock.query.filter_by(product_id=product_id).order_by(Stock.timestamp.desc()).all()
-    return render_template('stock.html', product=product, stocks=stocks)
+    products = Product.query.all()
+    return render_template('add_product.html', form=Form(), products=products)
 
 @main.route('/add_location', methods=['GET', 'POST'])
 def add_location():
-    locations = Location.query.all()  # Query all locations
     if request.method == 'POST':
         # Haetaan lomakkeelta tiedot
         type = request.form['type']
         shelf = request.form['shelf']
         # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-
         # Luodaan uusi sijainti tietokantaan
         new_location = Location(type=type, shelf=shelf)
         db.session.add(new_location)
         db.session.commit()
-        
-        locations = Location.query.all()  # Query all locations
         return redirect(url_for('main.add_location'))
         
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_location.html', form=ProductForm(), locations=locations) 
+    locations = Location.query.all()
+    return render_template('add_location.html', form=Form(), locations=locations) 
 
 @main.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
+    
     if request.method == 'POST':
-        # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        product = request.form['product']
+        product_id = request.form['search_product']
+        location_id = request.form['to_location']
         quantity = request.form['quantity']
-        action = request.form['action']
-        input_stock = Stock(product=product, quantity=quantity, action=action)
+        timestamp = datetime.now()
+        product = Product.query.get(product_id)
+        location = Location.query.get(location_id)
+        
+        # add to Stock
+        input_stock = Stock(location=location, product=product, quantity=quantity, timestamp=timestamp)
         db.session.add(input_stock)
         db.session.commit()
-        return redirect(url_for('main.add_stock'), form=StockForm())
+        
+        # add to Log
+        new_log = Log(event_type='in', quantity_changed=quantity, to_location_id=location_id, product=product_id, timestamp=timestamp)
+        db.session.add(new_log)
+        db.session.commit()
+        return redirect(url_for('main.add_stock'))
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('add_stock.html', form=StockForm())
+    stocks = Stock.query.all()
+    return render_template('add_stock.html', form=Form(), stocks=stocks)
 
 @main.route('/transfer_product', methods=['GET', 'POST'])
 def transfer_product():
     if request.method == 'POST':
-        # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.transfer_product'))  # Ohjaa takaisin pääsivulle
+        product_id = request.form['product']
+        from_location = Stock.location.query.filter_by(product_id=product_id).all()
+        current_quantity = Stock.quantity.query.filter_by(product_id=product_id, location_id=from_location).first()
+        destination_location = request.form['destination_location']
+        quantity = request.form['quantity']
+        
+
+        # Check if quantity is a valid integer
+        if not quantity.isdigit():
+            flash('Error: Quantity must be a valid integer.')
+            return redirect(url_for('main.transfer_product'))
+        
+        # Update database with the new location
+        # If quantity is smaller than the stock, update the stock and create new stock for the destination location
+        if int(quantity) < current_quantity:
+            product.stock.quantity -= int(quantity)
+            new_stock = Stock(product_id=product.id, quantity=int(quantity), timestamp=datetime.now(), action='transfer', location_id=destination_location)
+            db.session.add(new_stock)
+            db.session.commit()
+        # If quantity is equal to the stock, update the stock with the new location
+        elif int(quantity) == current_quantity:
+            product.location_id = destination_location
+            db.session.commit()
+        # If quantity is greater than the stock, return an error message
+        else:
+            flash('Error: Quantity is greater than the available stock.')
+        return redirect(url_for('main.transfer_product'))
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('transfer_product.html', form=ProductForm())
+    return render_template('transfer_product.html', form=Form())
 
 @main.route('/remove_material', methods=['GET', 'POST'])
 def remove_material():
@@ -105,4 +118,4 @@ def remove_material():
         return redirect(url_for('main.remove_material'))  # Ohjaa takaisin pääsivulle
 
     # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('remove_material.html', form=ProductForm())
+    return render_template('remove_material.html', form=Form())
