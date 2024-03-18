@@ -13,7 +13,8 @@ main = Blueprint('main', __name__)
 def index():
     print(current_app)  # Tulostaa Flask-sovelluksen olion
     print(current_app.jinja_env.loader.list_templates())  # Tulostaa kaikki ladatut templaatit
-    return render_template('index.html')
+    stocks = Stock.query.all()
+    return render_template('index.html', stocks=stocks)
 
 @main.route('/add_product', methods=['GET', 'POST'])
 def add_product():
@@ -80,13 +81,24 @@ def add_stock():
 @main.route('/transfer_product', methods=['GET', 'POST'])
 def transfer_product():
     if request.method == 'POST':
-        product_id = request.form['product']
-        from_location = Stock.location.query.filter_by(product_id=product_id).all()
-        current_quantity = Stock.quantity.query.filter_by(product_id=product_id, location_id=from_location).first()
+        product_id = request.form['product_in_stock']
+        from_location = SelectField('From Location')
+
+        def __init__(self, *args, **kwargs):
+            product_id = kwargs.pop('product_id', None)
+            super(Form, self).__init__(*args, **kwargs)
+            if product_id:
+                # Filter the locations based on the product_id
+                self.from_location.choices = [(location.id, location.name) for location in Location.query.filter_by(product=product_id).all()]
+            else:
+                self.from_location.choices = []
+        from_location = Stock.query.filter_by(product=product_id).all()
+        product = Product.query.get(product_id)
+        location = Location.query.get(from_location)
+        current_quantity = Stock.quantity.query.filter_by(product=product, location=location).first()
         destination_location = request.form['destination_location']
         quantity = request.form['quantity']
-        
-
+        timestamp = datetime.now()
         # Check if quantity is a valid integer
         if not quantity.isdigit():
             flash('Error: Quantity must be a valid integer.')
@@ -95,13 +107,14 @@ def transfer_product():
         # Update database with the new location
         # If quantity is smaller than the stock, update the stock and create new stock for the destination location
         if int(quantity) < current_quantity:
-            product.stock.quantity -= int(quantity)
-            new_stock = Stock(product_id=product.id, quantity=int(quantity), timestamp=datetime.now(), action='transfer', location_id=destination_location)
+            # update current quantity
+            current_quantity -= int(quantity)
+            new_stock = Stock(product=product, quantity=int(quantity), timestamp=timestamp, location=destination_location)
             db.session.add(new_stock)
             db.session.commit()
         # If quantity is equal to the stock, update the stock with the new location
         elif int(quantity) == current_quantity:
-            product.location_id = destination_location
+            from_location = destination_location
             db.session.commit()
         # If quantity is greater than the stock, return an error message
         else:

@@ -21,6 +21,9 @@ def get_products_in_stock():
     # Replace this with your actual implementation
     return Product.query.join(Stock, Product.id == Stock.product_id).all()
 
+def get_locations_filtered_by_product():
+    return Stock.query.filter_by(product=product_id).all()
+
 class Form(FlaskForm):
     # new product
     mancode = StringField('Manufacturer Code', validators=[DataRequired()])
@@ -31,14 +34,12 @@ class Form(FlaskForm):
     create_location = StringField('Location', validators=[DataRequired()])
     type = SelectField('Type', choices=[('outside', 'Outside'), ('inside', 'Inside'), ('yard', 'Yard')], validators=[DataRequired()])
     shelf = StringField('Shelf', validators=[DataRequired()])
-    # move and edit stock
+    # add stock
     search_product = QuerySelectField('Product', query_factory=get_products, get_label='description', validators=[DataRequired()])
-    from_location = QuerySelectField('Location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
-    to_location = QuerySelectField('Location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
+    to_location = QuerySelectField('To location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
     quantity = IntegerField('Quantity', validators=[DataRequired()])
-    # move product
-    product = QuerySelectField('Product', query_factory=get_products_in_stock, get_label='description', validators=[DataRequired()])
-    source_location = QuerySelectField('Source Location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
-    destination_location = QuerySelectField('Destination Location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
+    # transfer product
+    product_in_stock = QuerySelectField('Product', query_factory=get_products_in_stock, get_label='description', validators=[DataRequired()])
+    from_location = QuerySelectField('From location', query_factory=get_locations_filtered_by_product, get_label='shelf', validators=[DataRequired()])    
     # submit button
     submit = SubmitField('Submit')

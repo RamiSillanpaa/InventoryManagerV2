@@ -15,13 +15,13 @@
       </tr>
     </thead>
     <tbody>
-      {% for product in products %}
+      {% for stock in stocks %}
         <tr>
-          <td>{{ product.description }}</td>
-          <td>{{ location.type }}</td>
-          <td>{{ location.shelf }}</td>
-          <td>{{ stocks.quantity }}</td>
-          <td>{{ stocks.timestamp }}</td>
+          <td>{{ stock.product.description }}</td>
+          <td>{{ stock.location.type }}</td>
+          <td>{{ stock.location.shelf }}</td>
+          <td>{{ stock.quantity }}</td>
+          <td>{{ stock.timestamp }}</td>
         </tr>
       {% endfor %}
     </tbody>
