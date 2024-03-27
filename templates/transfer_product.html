@@ -3,20 +3,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
   <h2>Siirrä tuote varastosta toiseen</h2>
-  <form method="POST" action="">
+  <form action="/transfer_product/{{ stock_to_update.id }}" method="POST">
     {{ form.hidden_tag() }}
     <div class="form-group">
-      {{ form.product_in_stock.label }} {{ form.product_in_stock(class="form-control") }}
+      {{ form.product_in_stock.label }} {{ form.product_in_stock(class="form-control",  value=stock_to_update.product.description) }}
     </div>
     <div class="form-group">
-      {{ form.from_location.label }} {{ form.from_location(class="form-control") }}
+      {{ form.location.label }} {{ form.location(class="form-control", value=stock_to_update.location.shelf) }}
     </div>
     <div class="form-group">
-      {{ form.to_location.label }} {{ form.to_location(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.quantity.label }} {{ form.quantity(class="form-control") }}
+      {{ form.quantity.label }} {{ form.quantity(class="form-control", value=stock_to_update.quantity) }}
     </div>
     <div class="form-group">
       <input type="submit" value="Siirrä tuote" class="btn btn-primary">

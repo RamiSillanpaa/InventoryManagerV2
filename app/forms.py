@@ -21,9 +21,6 @@ def get_products_in_stock():
     # Replace this with your actual implementation
     return Product.query.join(Stock, Product.id == Stock.product_id).all()
 
-def get_locations_filtered_by_product():
-    return Stock.query.filter_by(product=product_id).all()
-
 class Form(FlaskForm):
     # new product
     mancode = StringField('Manufacturer Code', validators=[DataRequired()])
@@ -39,7 +36,7 @@ class Form(FlaskForm):
     to_location = QuerySelectField('To location', query_factory=get_locations, get_label='shelf', validators=[DataRequired()])
     quantity = IntegerField('Quantity', validators=[DataRequired()])
     # transfer product
-    product_in_stock = QuerySelectField('Product', query_factory=get_products_in_stock, get_label='description', validators=[DataRequired()])
-    from_location = QuerySelectField('From location', query_factory=get_locations_filtered_by_product, get_label='shelf', validators=[DataRequired()])    
+    product_in_stock = StringField('Product', validators=[DataRequired()])
+    location = StringField('Location', validators=[DataRequired()])
     # submit button
     submit = SubmitField('Submit')

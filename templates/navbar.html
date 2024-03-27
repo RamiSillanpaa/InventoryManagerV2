@@ -1,0 +1,13 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('main.index') }}">Etusivu</a>
+          <a class="nav-link" href="{{ url_for('main.add_product') }}">Lisää tuote</a>
+          <a class="nav-link" href="{{ url_for('main.add_location') }}">Lisää varastopaikka</a>
+          <a class="nav-link" href="{{ url_for('main.add_stock') }}">Lisää varastoon</a>
+          <a class="nav-link" href="{{ url_for('main.remove_material') }}">Poista raaka-aine</a>
+        </div>
+      </div>
+    </div>
+  </nav>
