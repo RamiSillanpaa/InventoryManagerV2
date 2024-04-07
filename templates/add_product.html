@@ -18,11 +18,16 @@
     <div class="form-group">
       {{ form.category.label }} {{ form.category(class="form-control") }}
     </div>
+    <br>
     <div class="form-group">
       <input type="submit" value="Lisää tuote" class="btn btn-primary">
     </div>
   </form>
-  <!-- Add table to display all products -->
+<!-- Add table to display all products -->
+<br>
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Haku" name="q" hx-get="/search_products" hx-trigger="keyup changed" hx-target="#results">
+</div>
   <table class="table">
     <thead>
       <tr>
@@ -32,15 +37,8 @@
         <th>Category</th>
       </tr>
     </thead>
-    <tbody>
-      {% for product in products %}
-        <tr>
-          <td>{{ product.mancode }}</td>
-          <td>{{ product.usercode }}</td>
-          <td>{{ product.description }}</td>
-          <td>{{ product.category }}</td>
-        </tr>
-      {% endfor %}
+    <tbody id="results">
+      
     </tbody>
   </table>
 {% endblock %}

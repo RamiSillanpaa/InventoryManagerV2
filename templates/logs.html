@@ -1,0 +1,29 @@
+<!-- logs.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <title>Logs</title>
+</head>
+<table class="table">
+    <thead>
+      <tr>
+        <th>Event Type</th>
+        <th>Quantity Changed</th>
+        <th>Product</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for log in logs %}
+    <tr>
+        <td>{{ log.event_type }}</td>
+        <td>{{ log.quantity_changed }}</td>
+        <td>{{ log.product }}</td>
+        <td>{{ log.timestamp }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

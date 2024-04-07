@@ -3,7 +3,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<br>
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Haku" name="q" hx-get="/search_stock" hx-trigger="keyup changed" hx-target="#results">
+</div>
   <h2>Tuotteet</h2>
+  {% if stocks %}
   <table class="table">
     <thead>
       <tr>
@@ -14,16 +19,11 @@
         <th>Päivämäärä</th>
       </tr>
     </thead>
-    <tbody>
-      {% for stock in stocks %}
-        <tr>
-          <td>{{ stock.product.description }}</td>
-          <td>{{ stock.location.type }}</td>
-          <td>{{ stock.location.shelf }}</td>
-          <td>{{ stock.quantity }}</td>
-          <td>{{ stock.timestamp }}</td>
-        </tr>
-      {% endfor %}
+    <tbody id="results">
+
     </tbody>
+  {% else %}
+  <p>No results found.</p>
+  {% endif %} 
   </table>
 {% endblock %}

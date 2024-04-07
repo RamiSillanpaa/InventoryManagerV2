@@ -6,6 +6,7 @@ from app.forms import Form
 from .models import db, Location, Product, Stock, Log
 from datetime import datetime
 #from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import or_
 
 main = Blueprint('main', __name__)
 
@@ -83,23 +84,100 @@ def transfer_product(id):
     form = Form()
     stock_to_update = Stock.query.get(id)
     if request.method == 'POST':
-        stock_to_update.location = request.form['location']
-        stock_to_update.quantity = request.form['quantity']
+        new_location_id = int(request.form['to_location'])  # Convert to integer
+        stock_to_update.location_id = new_location_id
+        stock_to_update.quantity = int(request.form['quantity'])  # Convert to integer
         try:
+            with db.session.no_autoflush:
+                db.session.query(Stock).filter(Stock.id == id).update({
+                    'quantity': stock_to_update.quantity,
+                    'location_id': new_location_id
+                })
             db.session.commit()
             flash('Stock updated successfully.')
-            return render_template('transfer_product.html', form=form, stock_to_update=stock_to_update)
-        except:
+            return redirect(url_for('main.transfer_product', id=id))
+        except Exception as e:
+            db.session.rollback()
             flash('Error: Stock update failed.')
+            print(e)  # Print the exception for debugging purposes
             return render_template('transfer_product.html', form=form, stock_to_update=stock_to_update)
     else:
         return render_template('transfer_product.html', form=form, stock_to_update=stock_to_update)
 
-@main.route('/remove_material', methods=['GET', 'POST'])
-def remove_material():
-    if request.method == 'POST':
-        # Käsittelylogiikka lomakkeen datalle ja tietokantaan tallennus
-        return redirect(url_for('main.remove_material'))  # Ohjaa takaisin pääsivulle
+# route to delete stock
+@main.route('/delete_stock/<int:id>', methods=['GET', 'POST'])
+def delete_stock(id):
+    stock_to_delete = Stock.query.get(id)
+    db.session.delete(stock_to_delete)
+    db.session.commit()
+    return redirect(url_for('main.add_stock'))
 
-    # Jos HTTP-metodi on GET, renderöi lomakesivu
-    return render_template('remove_material.html', form=Form())
+# route to delete product
+@main.route('/delete_product/<int:id>', methods=['GET', 'POST'])
+def delete_product(id):
+    product_to_delete = Product.query.get(id)
+    db.session.delete(product_to_delete)
+    db.session.commit()
+    return redirect(url_for('main.add_product'))
+
+@main.route('/delete_location/<int:id>', methods=['GET', 'POST'])
+def delete_location(id):
+    location_to_delete = Location.query.get(id)
+    db.session.delete(location_to_delete)
+    db.session.commit()
+    return redirect(url_for('main.add_location'))
+
+@main.route('/logs')
+def logs():
+    logs = Log.query.all()
+    return render_template('logs.html', logs=logs)
+
+@main.route('/search_stock')
+def search_stock():
+    q = request.args.get('q')
+    print(q)
+
+    if q:
+        stocks = Stock.query.join(Product).filter(
+            or_(
+                Product.description.icontains(q),
+                Product.mancode.icontains(q),
+                Product.usercode.icontains(q)
+            )
+        ).order_by(Product.description.asc(), Stock.timestamp.asc()).all()
+    else:
+        stocks = []
+    return render_template('search_stock.html', stocks=stocks)
+
+@main.route('/search_products')
+def search_products():
+    q = request.args.get('q')
+    print(q)
+
+    if q:
+        products = Product.query.filter(
+            or_(
+                Product.description.icontains(q),
+                Product.mancode.icontains(q),
+                Product.usercode.icontains(q)
+            )
+        ).order_by(Product.description.asc()).all()
+    else:
+        products = []
+    return render_template('search_products.html', products=products)
+
+@main.route('/search_locations')
+def search_locations():
+    q = request.args.get('q')
+    print(q)
+
+    if q:
+        locations = Location.query.filter(
+            or_(
+                Location.shelf.icontains(q),
+                Location.type.icontains(q)
+            )
+        ).order_by(Location.shelf.asc()).all()
+    else:
+        locations = []
+    return render_template('search_locations.html', locations=locations)

@@ -12,11 +12,16 @@
     <div class="form-group">
       {{ form.shelf.label }} {{ form.shelf(class="form-control") }}
     </div>
+    <br>
     <div class="form-group">
       <input type="submit" value="Lisää varastopaikka" class="btn btn-primary">
     </div>
   </form>
-    <!-- Add table to display all locations -->
+<!-- Add table to display all locations -->
+<br>
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Haku" name="q" hx-get="/search_locations" hx-trigger="keyup changed" hx-target="#results">
+</div>
   <table class="table">
     <thead>
       <tr>
@@ -25,14 +30,8 @@
         <th>Shelf</th>
       </tr>
     </thead>
-    <tbody>
-      {% for location in locations %}
-        <tr>
-          <td>{{ location.id }}</td>
-          <td>{{ location.type }}</td>
-          <td>{{ location.shelf }}</td>
-        </tr>
-      {% endfor %}
+    <tbody id="results">
+
     </tbody>
   </table>
 {% endblock %}

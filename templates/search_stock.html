@@ -1,0 +1,9 @@
+{% for stock in stocks %}
+<tr>
+    <td><a href="{{ url_for('main.transfer_product', id=stock.id) }}">{{ stock.product.description }}</a></td>
+    <td>{{ stock.location.type }}</td>
+    <td>{{ stock.location.shelf }}</td>
+    <td>{{ stock.quantity }}</td>
+    <td>{{ stock.timestamp.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+</tr>
+{% endfor %}

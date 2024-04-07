@@ -15,6 +15,7 @@
     <div class="form-group">
       {{ form.quantity.label }} {{ form.quantity(class="form-control") }}
     </div>
+    <br>
     <div class="form-group">
       <input type="submit" value="Lisää varastoon" class="btn btn-primary">
     </div>
@@ -22,10 +23,12 @@
   <table class="table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Tuote</th>
         <th>Määrä</th>
         <th>Sijainti</th>
         <th>Hylly</th>
+        <th>Aikaleima</th>
       </tr>
     </thead>
     <tbody>
@@ -36,6 +39,7 @@
           <td>{{ stock.quantity }}</td>
           <td>{{ stock.location.type }}</td>
           <td>{{ stock.location.shelf }}</td>
+          <td>{{ stock.timestamp.strftime('%d-%m-%Y %H:%M:%S') }}</td>
         </tr>
       {% endfor %}
     </tbody>
