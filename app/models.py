@@ -8,17 +8,22 @@ from sqlalchemy.schema import FetchedValue
 
 
 class Location(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    # Shelf identifier
+    # Shelf unique id
+    # redundant?
+    # id = db.Column(db.Integer, primary_key=True)
+    
+    # Shelf identifier, unique
     shelf = db.Column(db.String(20), nullable=False, unique=True)
+    
     # Location type (inside, outside, yard)
     type = db.Column(db.String(20), nullable=False)
+    
     # Products in this location
     quantity = db.Column(db.Integer, nullable=True, default=0)
-    # Original timestamp when added into stock
-    # timestamp = db.Column(db.DateTime, nullable=True, default=datetime.utcnow, onupdate=False)
+    
     # Products in this location
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    
     # Logs from this location
     product = db.relationship('Product', back_populates='locations')
     stocks = db.relationship('Stock', back_populates='location')
