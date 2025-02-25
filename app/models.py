@@ -10,13 +10,14 @@ from sqlalchemy.schema import FetchedValue
 class Location(db.Model):
     # Shelf unique id
     # redundant?
-    # id = db.Column(db.Integer, primary_key=True)
+    #id = db.Column(db.Integer, primary_key=True)
     
-    # Shelf identifier, unique
+    # Shelf identifier, unique, primary key?
     shelf = db.Column(db.String(20), nullable=False, unique=True)
     
     # Location type (inside, outside, yard)
-    type = db.Column(db.String(20), nullable=False)
+    # redundant?
+    #type = db.Column(db.String(20), nullable=False)
     
     # Products in this location
     quantity = db.Column(db.Integer, nullable=True, default=0)
