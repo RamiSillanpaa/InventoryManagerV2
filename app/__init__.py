@@ -4,8 +4,11 @@ import os
 
 db = SQLAlchemy()
 
+# Get the base directory of your project
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 def create_app():
-    app = Flask(__name__, template_folder='/mnt/c/Users/raine/Documents/GitHub/InventoryManagerV2/templates')
+    app = Flask(__name__, template_folder='../templates')
    
    # Nämä kaksi riviä poistetaan kommenteista, kun käytät oikeaa sovellusta
     #secret_key = os.environ.get('SECRET_KEY')
@@ -16,7 +19,7 @@ def create_app():
     app.config['SECRET_KEY'] = secret_key
     
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/c/Users/raine/Documents/GitHub/InventoryManagerV2/instance/varastonhallinta.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, '..', 'instance', 'varastonhallinta.db')
 
     db.init_app(app)  # Siirretään db.init_app(app) tähän kohtaan
 
